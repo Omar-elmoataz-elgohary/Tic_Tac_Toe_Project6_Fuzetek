@@ -9,68 +9,152 @@ using namespace std;
 //==========================
 // Board Class
 //==========================
-class Board {
+class Board
+{
 private:
     char grid[3][3];
 public:
-    Board(){
-    // TODO : initialize the grid empty
+    Board()
+    {
+        // TODO : initialize the grid empty
+        reset();
     }
-    void display()const {
-    //TODO : print  the formated grid
-    //    1   2   3
-    // 1  X | O |
-    //   ---+---+---
-    // 2    | O |
-    //   ---+---+---
-    // 3    |   |
+    void display()const
+    {
+       cout<<"    1   2   3\n";
+        for(int i=0; i<3; i++)
+        {
+            cout<<" "<< i+1 <<"  ";
+            for(int j=0; j<3; j++)
+            {
+                cout<< grid[i][j];
+                if(j<2)
+                {
+                    cout<<" | ";
+                }
+            }
+            cout<<"\n";
+            if(i<2)
+            {
+                cout<<"   ---+---+---\n";
+            }
+        }
+        //TODO : print  the formated grid
+        //    1   2   3
+        // 1  X | O |
+        //   ---+---+---
+        // 2    | O |
+        //   ---+---+---
+        // 3    |   |
     }
-    bool makemove(int row,int col,char symbol){
+    bool makemove(int row,int col,char symbol)
+    {
+        if(isValid(row,col))
+        {
+            grid[row][col]=symbol;
+            return true;
+        }
+        return false;
 
-                 // TODO : check if valid move make the change return success status
-                 }
-    bool isValid(int row,int col)const{
-                 // TODO : check if the cell is empty return true if yes
-                 }
-    bool checkWin(char symbol)const{
-                 //TODO : check all win conditions
-                 }
-    bool isFull()const {
-                // TODO : check if there is no empty cells
+
     }
-    char getCell(int row, int col ){
-               // TODO : return the symbol if exists
+    bool isValid(int row,int col)const
+    {
+        if(row>=0 && row<3 && col>=0 && col<3 && grid[row][col]==' ')
+        {
+            return true;
+        }
+        return false;
+        // TODO : check if the cell is empty return true if yes
     }
-    void reset(){
-               // TODO : empty the grid
+    bool checkWin(char symbol)const
+    {
+        for(int i=0; i<3; i++)
+        {
+            if(grid[i][0]==symbol && grid[i][1]==symbol && grid[i][2]==symbol)
+            {
+                return true;
+            }
+        }
+        for(int j=0; j<3; j++)
+        {
+            if(grid[0][j]==symbol && grid[1][j]==symbol && grid[2][j]==symbol)
+            {
+                return true;
+            }
+        }
+        if(grid[0][0]==symbol && grid[1][1]==symbol&& grid[2][2]==symbol)
+        {
+            return true;
+        }
+        if(grid[0][2]==symbol && grid[1][1]==symbol && grid [2][0]==symbol)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool isFull()const
+    {
+        for(int i=0; i<3; i++)
+        {
+            for(int j=0; j<3; j++)
+            {
+                if(grid[i][j]==' ')
+                {
+                    return false;
+                }
+
+            }
+        }
+        return true;
+
+    }
+    char getCell(int row, int col )
+    {
+        return grid[row][col];
+
+    }
+    void reset()
+    {
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                grid[i][j]=' ';
+            }
+        }
+
     }
 
     // i don't think we need getsize
-    int getSize(){
-       //TODO : return the grid dimension
+    int getSize()
+    {
+        return 3;
+        //TODO : return the grid dimension
     }
 };
 //==========================
 // Player Class
 //==========================
 
-class Player {
+class Player
+{
 private:
     string name ;
     char symbol;
 public:
-    Player(const string& name,char symbol){
-         //TODO : initialize the player (can he enter a symbol outside the X,O?)
+    Player(const string& name,char symbol)
+    {
+        //TODO : initialize the player (can he enter a symbol outside the X,O?)
     }
 
-    virtual void getMove(int& row , int& col)= 0;// pure virtual
+    virtual void getMove(int& row, int& col)= 0; // pure virtual
     //for human to make move go to the human player class
 
-    string getName()const{} // return the name
-    char getSymbol()const{} // return the symbol
+    string getName()const {} // return the name
+    char getSymbol()const {} // return the symbol
 
-    void setName(const string& name ){
-       //TODO : update the name
+    void setName(const string& name )
+    {
+        //TODO : update the name
     }
 
 
@@ -78,13 +162,15 @@ public:
 //===================
 //Humanplayer
 //===================
-class Humanplayer : public Player {
+class Humanplayer : public Player
+{
 public:
-    Humanplayer(const string & name , char symbol) : Player(name,symbol){}
+    Humanplayer(const string & name, char symbol) : Player(name,symbol) {}
 
 
-    void getMove(int& row , int & col )override{
-    // call the needed functions from board and change row,col
+    void getMove(int& row, int & col )override
+    {
+        // call the needed functions from board and change row,col
     }
 
 
@@ -94,9 +180,10 @@ public:
 //=================
 //ENUMERATION
 //=================
-enum class Difficulty{
-  EASY,
-  HARD
+enum class Difficulty
+{
+    EASY,
+    HARD
 //may increase in the future
 };
 
@@ -104,129 +191,171 @@ enum class Difficulty{
 //==========================
 // AIplayer Class
 //==========================
-class AIplayer : public Player{
+class AIplayer : public Player
+{
 private:
     Difficulty difficultylevel;
     const Board* gameBoard; // the way for ai to see the board
-   // easy mode choses a insta win move or a random move
-   void getRandomMove( int& row,int&col ){
-   //TODO : used if diff is easy to return just change row and col (you have the board)
+    // easy mode choses a insta win move or a random move
+    void getRandomMove( int& row,int&col )
+    {
+        //TODO : used if diff is easy to return just change row and col (you have the board)
 
-   for(int r =0;r<3;r++){
-    for(int c=0;c<3;c++){
-        if(gameBoard->isValid(r,c)){
-            Board tempboard = *gameBoard;
-            tempboard.makemove(r,c,getSymbol());
-            if(tempboard.checkWin(getSymbol())){
-                row=r;
-                col=c;
-                return;
+        for(int r =0; r<3; r++)
+        {
+            for(int c=0; c<3; c++)
+            {
+                if(gameBoard->isValid(r,c))
+                {
+                    Board tempboard = *gameBoard;
+                    tempboard.makemove(r,c,getSymbol());
+                    if(tempboard.checkWin(getSymbol()))
+                    {
+                        row=r;
+                        col=c;
+                        return;
+                    }
+                }
             }
         }
-    }
-   }
 
 
-     while(true){
-     int r = rand() %3;
-     int c = rand()%3;
-     if(gameBoard->isValid(r,c)){
-        row=r;
-        col=c;
-        break;
-     }
-     }
-
-   }
-   //helper function
-   int Minmax(Board currboard,char currsymbol){
-    if(currboard.isFull()){
-       return evaluateBoard(currboard);
-    }
-    char opsymbol = (currsymbol=='X') ? 'O' : 'X';
-    int bestscore;
-    if(currsymbol== getSymbol()){
-        bestscore=-100;
-    }else{bestscore=100;}
-
-    for(int r =0;r<3;r++){
-    for(int c=0;c<3;c++){
-        if(currboard.isValid(r,c)){
-        Board testBoard = currboard;
-
-
-        testBoard.makemove(r,c,currsymbol);
-        int score= Minmax(testBoard,opsymbol);
-
-
-        if(currsymbol== getSymbol()){
-          bestscore=max(bestscore,score);
-          }
-          else{bestscore=min(bestscore,score);}
+        while(true)
+        {
+            int r = rand() %3;
+            int c = rand()%3;
+            if(gameBoard->isValid(r,c))
+            {
+                row=r;
+                col=c;
+                break;
+            }
         }
-       }
-      }
 
-    return bestscore;
-   }
-
-   void getBestMove( int& row,int&col) {
-   //TODO : used if diff is hard to return just change row and col (you have the board)
-   int bestscore=-10000;
-   int br,bc;//the cell coordinations of best score
-
-   for(int r =0;r<3;r++){
-    for(int c=0;c<3;c++){
-        if(gameBoard->isValid(r,c)){
-          Board tboard=*gameBoard;
-
-          if(Minmax(tboard,getSymbol())>bestscore){
-          bestscore=Minmax(tboard,getSymbol());
-          br=r;
-          bc=c;
-          }
-        }
     }
-   }
-   row=br;
-   col=bc;
-   }
+    //helper function
+    int Minmax(Board currboard,char currsymbol)
+    {
+        if(currboard.isFull())
+        {
+            return evaluateBoard(currboard);
+        }
+        char opsymbol = (currsymbol=='X') ? 'O' : 'X';
+        int bestscore;
+        if(currsymbol== getSymbol())
+        {
+            bestscore=-100;
+        }
+        else
+        {
+            bestscore=100;
+        }
+
+        for(int r =0; r<3; r++)
+        {
+            for(int c=0; c<3; c++)
+            {
+                if(currboard.isValid(r,c))
+                {
+                    Board testBoard = currboard;
+
+
+                    testBoard.makemove(r,c,currsymbol);
+                    int score= Minmax(testBoard,opsymbol);
+
+
+                    if(currsymbol== getSymbol())
+                    {
+                        bestscore=max(bestscore,score);
+                    }
+                    else
+                    {
+                        bestscore=min(bestscore,score);
+                    }
+                }
+            }
+        }
+
+        return bestscore;
+    }
+
+    void getBestMove( int& row,int&col)
+    {
+        //TODO : used if diff is hard to return just change row and col (you have the board)
+        int bestscore=-10000;
+        int br,bc;//the cell coordinations of best score
+
+        for(int r =0; r<3; r++)
+        {
+            for(int c=0; c<3; c++)
+            {
+                if(gameBoard->isValid(r,c))
+                {
+                    Board tboard=*gameBoard;
+
+                    if(Minmax(tboard,getSymbol())>bestscore)
+                    {
+                        bestscore=Minmax(tboard,getSymbol());
+                        br=r;
+                        bc=c;
+                    }
+                }
+            }
+        }
+        row=br;
+        col=bc;
+    }
 
 public:
     //if u have other solutions for the constructor error change the (:Player .......)
-   AIplayer(const string& name,char symbol, Difficulty difficulty,const Board*board): Player(name,symbol){
-   //TODO initialize the difficulty and board they will be handed to this function later
-   difficultylevel = difficulty;
-   gameBoard = board;
-   }
+    AIplayer(const string& name,char symbol, Difficulty difficulty,const Board*board): Player(name,symbol)
+    {
+        //TODO initialize the difficulty and board they will be handed to this function later
+        difficultylevel = difficulty;
+        gameBoard = board;
+    }
 
-   void getMove(int & row, int & col)override{
-   // TODO : Do the move after checking if valid
-   if(difficultylevel==Difficulty::EASY){
-    getRandomMove(row,col);
-   }else{
-   getBestMove(row,col);}
-
-
-   }
-
-
-   void setDifficulty(Difficulty newDifficulty){
-   //TODO : update the difficulty
-   difficultylevel = newDifficulty;
-   }
+    void getMove(int & row, int & col)override
+    {
+        // TODO : Do the move after checking if valid
+        if(difficultylevel==Difficulty::EASY)
+        {
+            getRandomMove(row,col);
+        }
+        else
+        {
+            getBestMove(row,col);
+        }
 
 
-   //functions bellow can be changed
-   // need a function to help navigate the possibilities and evaluate as explained in the record
-    int evaluateBoard(const Board & board ){
-    // use checkWin and evaluate (w/d/L) (10/0/-10)
-    char opsymbol = (getSymbol() == 'X')?'O':'X';
-    if(board.checkWin(getSymbol())){
-        return 10;
-    }else if(board.checkWin(opsymbol)){
-    return -10 ;
-    }else {return 0;}
+    }
+
+
+    void setDifficulty(Difficulty newDifficulty)
+    {
+        //TODO : update the difficulty
+        difficultylevel = newDifficulty;
+    }
+
+
+    //functions bellow can be changed
+    // need a function to help navigate the possibilities and evaluate as explained in the record
+    int evaluateBoard(const Board & board )
+    {
+        // use checkWin and evaluate (w/d/L) (10/0/-10)
+        char opsymbol = (getSymbol() == 'X')?'O':'X';
+        if(board.checkWin(getSymbol()))
+        {
+            return 10;
+        }
+        else if(board.checkWin(opsymbol))
+        {
+            return -10 ;
+        }
+        else
+        {
+            return 0;
+        }
 
     }
 
@@ -237,58 +366,70 @@ public:
 //==========================
 // Game Class
 //==========================
-class Game {
+class Game
+{
 private:
-Board board;
-Player* player1;
-Player* player2;
-Player* currentplayer;
+    Board board;
+    Player* player1;
+    Player* player2;
+    Player* currentplayer;
 public:
-    Game():board(),player1(nullptr),player2(nullptr),currentplayer(nullptr){}
+    Game():board(),player1(nullptr),player2(nullptr),currentplayer(nullptr) {}
 
-    ~Game(){
-    delete player1;
-    delete player2;
-
-    }
-
-    void start(){
-
-    // every thing happens here (looping until the game ends,changing the currentplayer, checking if game ended )
-    }
-    void showMenu(){
-    // make him choose between pvp , pvc (hard,easy) , exit
-    }
-    void setupPvP(){
-    // make him enter their names and sumbols
-    }
-    void setupPvC(Difficulty difficulty){
-    // make him enter his name and symbol , pass the difficulty to the ai
-    }
-    void switchplayer(){
-    // after each move chnge what currentplayer points at
-    }
-    void playerTurn(){
-    int r,c;
-    //if human get the cell he wants if ai make r=c=0
-    //getMove function should handle the rest
-    //make the change happen in the board
+    ~Game()
+    {
+        delete player1;
+        delete player2;
 
     }
-    bool checkGameEnd(){
-    // the function needed is in board class
-    // i didn't fully understand the pdf here
+
+    void start()
+    {
+
+        // every thing happens here (looping until the game ends,changing the currentplayer, checking if game ended )
     }
-    void displayResult(){
-    // display the board
+    void showMenu()
+    {
+        // make him choose between pvp , pvc (hard,easy) , exit
     }
-    void reset(){
-    //prepare for new round
+    void setupPvP()
+    {
+        // make him enter their names and sumbols
+    }
+    void setupPvC(Difficulty difficulty)
+    {
+        // make him enter his name and symbol , pass the difficulty to the ai
+    }
+    void switchplayer()
+    {
+        // after each move chnge what currentplayer points at
+    }
+    void playerTurn()
+    {
+        int r,c;
+        //if human get the cell he wants if ai make r=c=0
+        //getMove function should handle the rest
+        //make the change happen in the board
+
+    }
+    bool checkGameEnd()
+    {
+        // the function needed is in board class
+        // i didn't fully understand the pdf here
+    }
+    void displayResult()
+    {
+        // display the board
+    }
+    void reset()
+    {
+        //prepare for new round
     }
 };
 
 
-int main(){
+int main()
+{
     srand(time(0));
     Game Tic_Tac_Toe;
     Tic_Tac_Toe.start();
