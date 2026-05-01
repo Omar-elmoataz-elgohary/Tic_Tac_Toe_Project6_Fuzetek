@@ -141,20 +141,18 @@ private:
     string name ;
     char symbol;
 public:
-    Player(const string& name,char symbol)
-    {
-        //TODO : initialize the player (can he enter a symbol outside the X,O?)
-    }
+    Player(const string& name,char symbol) : name(name), symbol(symbol) {}
+    virtual ~Player() {}
 
     virtual void getMove(int& row, int& col)= 0; // pure virtual
     //for human to make move go to the human player class
 
-    string getName()const {} // return the name
-    char getSymbol()const {} // return the symbol
+    string getName()const { return name; }
+    char getSymbol()const { return symbol; }
 
-    void setName(const string& name )
+    void setName(const string& newName)
     {
-        //TODO : update the name
+        name = newName;
     }
 
 
@@ -164,13 +162,36 @@ public:
 //===================
 class Humanplayer : public Player
 {
+private:
+    const Board* gameBoard;
 public:
-    Humanplayer(const string & name, char symbol) : Player(name,symbol) {}
+    Humanplayer(const string & name, char symbol, const Board* board)
+        : Player(name,symbol), gameBoard(board) {}
 
 
     void getMove(int& row, int & col )override
     {
-        // call the needed functions from board and change row,col
+        int r, c;
+        while(true)
+        {
+            cout << getName() << " (" << getSymbol() << "), enter row and column (1-3): ";
+            if(!(cin >> r >> c))
+            {
+                cout << "Invalid input. Please enter two numbers.\n";
+                cin.clear();
+                cin.ignore(10000, '\n');
+                continue;
+            }
+            r -= 1;
+            c -= 1;
+            if(gameBoard->isValid(r, c))
+            {
+                row = r;
+                col = c;
+                return;
+            }
+            cout << "Invalid move. Cell is out of range or already occupied. Try again.\n";
+        }
     }
 
 
