@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <cctype>
+#include <limits>
 using namespace std;
 
 //==========================
@@ -141,7 +143,16 @@ private:
     string name ;
     char symbol;
 public:
-    Player(const string& name,char symbol) : name(name), symbol(symbol) {}
+    Player(const string& name,char symbol) : name(name), symbol(static_cast<char>(toupper(symbol)))
+    {
+        // AI logic assumes opponent is the other of {X, O} (see AIplayer::Minmax),
+        // so reject anything else fast rather than silently corrupting gameplay.
+        if(this->symbol != 'X' && this->symbol != 'O')
+        {
+            cerr << "Player symbol must be 'X' or 'O' (got '" << symbol << "').\n";
+            exit(1);
+        }
+    }
     virtual ~Player() {}
 
     virtual void getMove(int& row, int& col)= 0; // pure virtual
@@ -163,9 +174,9 @@ public:
 class Humanplayer : public Player
 {
 private:
-    const Board* gameBoard;
+    const Board& gameBoard;
 public:
-    Humanplayer(const string & name, char symbol, const Board* board)
+    Humanplayer(const string & name, char symbol, const Board& board)
         : Player(name,symbol), gameBoard(board) {}
 
 
@@ -177,14 +188,19 @@ public:
             cout << getName() << " (" << getSymbol() << "), enter row and column (1-3): ";
             if(!(cin >> r >> c))
             {
+                if(cin.eof())
+                {
+                    cout << "\nInput closed. Exiting.\n";
+                    exit(0);
+                }
                 cout << "Invalid input. Please enter two numbers.\n";
                 cin.clear();
-                cin.ignore(10000, '\n');
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 continue;
             }
             r -= 1;
             c -= 1;
-            if(gameBoard->isValid(r, c))
+            if(gameBoard.isValid(r, c))
             {
                 row = r;
                 col = c;
