@@ -273,10 +273,15 @@ private:
     //helper function
     int Minmax(Board currboard,char currsymbol)
     {
+        if(evaluateBoard(currboard)!=0){
+            return evaluateBoard(currboard);
+        }
+
         if(currboard.isFull())
         {
             return evaluateBoard(currboard);
         }
+
         char opsymbol = (currsymbol=='X') ? 'O' : 'X';
         int bestscore;
         if(currsymbol== getSymbol())
@@ -320,8 +325,8 @@ private:
     {
         //TODO : used if diff is hard to return just change row and col (you have the board)
         int bestscore=-10000;
-        int br,bc;//the cell coordinations of best score
-
+        int br=0,bc=0;//the cell coordinations of best score
+        char opsymbol = (getSymbol()=='X')? 'O':'X';
         for(int r =0; r<3; r++)
         {
             for(int c=0; c<3; c++)
@@ -330,9 +335,12 @@ private:
                 {
                     Board tboard=*gameBoard;
 
-                    if(Minmax(tboard,getSymbol())>bestscore)
+                    tboard.makemove(r,c,getSymbol());
+                    int score = Minmax(tboard,opsymbol);
+
+                    if(score>bestscore)
                     {
-                        bestscore=Minmax(tboard,getSymbol());
+                        bestscore=score;
                         br=r;
                         bc=c;
                     }
@@ -438,17 +446,32 @@ public:
     void showMenu()
     {
         int choice;
-        cout << "1.Player vs Player \n2.Player vs Computer (Easy) \n3.Player vs Computer (Hard)\n";
-        cin >> choice;
-        if(choice == 1){
-            setupPvP();
-        }
-        else if(choice == 2){
-            setupPvC(Difficulty :: EASY);
+        while(true){
+        cout << "Welcome to the tec tac toe game please sellect between \n"
+             << "1.Player vs Player \n"
+             << "2.Player vs Computer (Easy) \n"
+             << "3.Player vs Computer (Hard)\n";
+        if(cin >> choice){
+            if(choice == 1){
+                 setupPvP();
+                 break;
+            }
+            else if(choice == 2){
+                 setupPvC(Difficulty :: EASY);
+                 break;
+            }
+            else if (choice == 3){
+                 setupPvC(Difficulty :: HARD);
+                 break;
+            }
+            else{cout<<"Choice does not exist in menu.\nPlease try again\n\n";}
         }
         else{
-            setupPvC(Difficulty :: HARD);
+          cout<<"Invalid input! Please enter a number\n\n";
+          cin.clear();
+          cin.ignore(numeric_limits<streamsize>::max(),'\n');
         }
+      }
     }
     void setupPvP()
     {
@@ -457,8 +480,8 @@ public:
         cin >> n1;
         cout << "Player 2: ";
         cin >> n2;
-        player1 = new Humanplayer(n1, 'X');
-        player2 = new Humanplayer(n2, 'O');
+        player1 = new Humanplayer(n1,'X', board);
+        player2 = new Humanplayer(n2, 'O', board);
         currentplayer = player1;
     }
     void setupPvC(Difficulty difficulty)
@@ -466,7 +489,7 @@ public:
         string n ;
         cout << "Your name: ";
         cin >> n ;
-        player1 = new Humanplayer(n, 'X');
+        player1 = new Humanplayer(n, 'X',board);
         player2 = new AIplayer("AI", 'O', difficulty, &board);
         currentplayer = player1;
     }
