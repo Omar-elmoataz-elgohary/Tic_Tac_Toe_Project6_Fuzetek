@@ -385,45 +385,90 @@ public:
 
     void start()
     {
+        showMenu();
+       while(true){
+        board.display();
+        playerTurn();
 
-        // every thing happens here (looping until the game ends,changing the currentplayer, checking if game ended )
+    if(checkGameEnd()){
+        displayResult();
+        break;
+    }
+
+    switchplayer();
+}
     }
     void showMenu()
     {
-        // make him choose between pvp , pvc (hard,easy) , exit
+        int choice;
+        cout << "1.Player vs Player \n2.Player vs Computer (Easy) \n3.Player vs Computer (Hard)\n";
+        cin >> choice;
+        if(choice == 1){
+            setupPvP();
+        }
+        else if(choice == 2){
+            setupPvC(Difficulty :: EASY);
+        }
+        else{
+            setupPvC(Difficulty :: HARD);
+        }
     }
     void setupPvP()
     {
-        // make him enter their names and sumbols
+        string n1,n2;
+        cout << "Player 1: ";
+        cin >> n1;
+        cout << "Player 2: ";
+        cin >> n2;
+        player1 = new Humanplayer(n1, 'X');
+        player2 = new Humanplayer(n2, 'O');
+        currentplayer = player1;
     }
     void setupPvC(Difficulty difficulty)
     {
-        // make him enter his name and symbol , pass the difficulty to the ai
+        string n ;
+        cout << "Your name: ";
+        cin >> n ;
+        player1 = new Humanplayer(n, 'X');
+        player2 = new AIplayer("AI", 'O', difficulty, &board);
+        currentplayer = player1;
     }
     void switchplayer()
     {
-        // after each move chnge what currentplayer points at
+        currentplayer = (currentplayer == player1)? player2:player1;
     }
     void playerTurn()
     {
         int r,c;
-        //if human get the cell he wants if ai make r=c=0
-        //getMove function should handle the rest
-        //make the change happen in the board
+        while(true){
+            currentplayer -> getMove(r,c);
+            if(board.makemove(r,c,currentplayer->getSymbol())){
+                break;
+            }
+                else{
+                cout << "Invalid move! \n";
+            }
+        }
 
     }
     bool checkGameEnd()
     {
-        // the function needed is in board class
-        // i didn't fully understand the pdf here
+        return board.checkWin(currentplayer->getSymbol()) || board.isFull();
     }
     void displayResult()
     {
-        // display the board
+        board.display();
+        if(board.checkWin(currentplayer->getSymbol())){
+            cout << currentplayer->getName() << " wins! \n";
+        }
+        else{
+            cout << "Draw! \n";
+        }
     }
     void reset()
     {
-        //prepare for new round
+    board.reset();
+    currentplayer = player1;
     }
 };
 
